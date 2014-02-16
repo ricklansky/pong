@@ -1,1 +1,1 @@
-A simple pong game used to test out the Phase game platform.
+A simple pong game used to test out the Phaser game platform.
