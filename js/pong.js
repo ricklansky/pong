@@ -1,7 +1,7 @@
 (function() {
-    var _ = new Constants(),
+    var CONST = new pong.Constants(),
         ballIsInPlay = false,
-        game = new Phaser.Game(_.width, _.height, Phaser.AUTO, '', { preload: preload, create: create, update: update }),
+        game = new Phaser.Game(CONST.width, CONST.height, Phaser.AUTO, '', { preload: preload, create: create, update: update }),
         currentSpeed,
         walls,
         leftPlayer,
@@ -22,14 +22,14 @@
 
     function create() {
         var sprite = game.add.sprite(0, 0, 'bg');
-        sprite.scale.setTo(_.width / _.background.width, _.height / _.background.height);
+        sprite.scale.setTo(CONST.width / CONST.background.width, CONST.height / CONST.background.height);
 
-        leftPlayer = createPlayer(_.paddle.offset, _.height/2.0);
-        rightPlayer = createPlayer(_.width - _.paddle.offset - _.paddle.width, _.height/2.0);
+        leftPlayer = createPlayer(CONST.paddle.offset, CONST.height/2.0);
+        rightPlayer = createPlayer(CONST.width - CONST.paddle.offset - CONST.paddle.width, CONST.height/2.0);
 
         walls = game.add.group();
         createWall(1);
-        createWall(_.height - 1);
+        createWall(CONST.height - 1);
 
         createScores();
 
@@ -60,7 +60,7 @@
     }
 
     function createBall() {
-        var ball = game.add.sprite(_.width/2.0, _.height/2.0, 'ball');
+        var ball = game.add.sprite(CONST.width/2.0, CONST.height/2.0, 'ball');
 
         setPieceParameters(ball, 0.5, false);
         ball.body.collideCallback = ballHit;
@@ -77,23 +77,23 @@
     }
 
     function createWall(wallLocation) {
-        var wall = walls.create(_.width/2.0, wallLocation);
+        var wall = walls.create(CONST.width/2.0, wallLocation);
         wall.anchor.setTo(0.5, 0.5);
         wall.renderable = false;
         wall.height = 1;
-        wall.width = _.width;
+        wall.width = CONST.width;
         wall.body.immovable = true;
     }
 
     function createScores() {
-        scores.leftText = game.add.text(_.score.offset.x, _.score.offset.y, '0', _.score.font);
-        scores.rightText = game.add.text(_.score.offset.rightNumber, _.score.offset.y, '0', _.score.font);
+        scores.leftText = game.add.text(CONST.score.offset.x, CONST.score.offset.y, '0', CONST.score.font);
+        scores.rightText = game.add.text(CONST.score.offset.rightNumber, CONST.score.offset.y, '0', CONST.score.font);
     }
 
     function releaseBall() {
         setTimeout(function() {
             ballIsInPlay = true;
-            currentSpeed = _.ball.speed;
+            currentSpeed = CONST.ball.speed;
 
             var vectorSpeed = Math.sqrt(currentSpeed*currentSpeed/2.0);
             ball.body.velocity.x = vectorSpeed * (Math.random() > 0.5 ? 1.0 : -1.0);
@@ -106,9 +106,9 @@
             downPressed = game.input.keyboard.isDown(downKey);
 
         if (upPressed && !downPressed) {
-            player.body.velocity.y = -_.paddle.speed;
+            player.body.velocity.y = -CONST.paddle.speed;
         } else if (downPressed && !upPressed) {
-            player.body.velocity.y = _.paddle.speed;
+            player.body.velocity.y = CONST.paddle.speed;
         } else {
             player.body.velocity.y = 0;
         }
@@ -121,13 +121,13 @@
             ball.body.x = ball.body.preX;
         }
 
-        if(ballIsInPlay && (ball.topLeft.x < _.paddle.leftEdge || ball.topRight.x > _.paddle.rightEdge)) {
+        if(ballIsInPlay && (ball.topLeft.x < CONST.paddle.leftEdge || ball.topRight.x > CONST.paddle.rightEdge)) {
             score();
         }
     }
 
     function score() {
-        if (ball.body.x < _.width / 2) {
+        if (ball.body.x < CONST.width / 2) {
             scores.right += 1;
         } else {
             scores.left += 1;
@@ -143,14 +143,14 @@
     }
 
     function updateScores() {
-        scores.leftText.setText(scores.left < _.score.winner ? scores.left : 'WINNER');
-        if (scores.left === _.score.winner) {
+        scores.leftText.setText(scores.left < CONST.score.winner ? scores.left : 'WINNER');
+        if (scores.left === CONST.score.winner) {
             return false;
         }
 
-        scores.rightText.setText(scores.right < _.score.winner ? scores.right : 'WINNER');
-        if (scores.right === _.score.winner) {
-            scores.rightText.x = _.score.offset.rightText;
+        scores.rightText.setText(scores.right < CONST.score.winner ? scores.right : 'WINNER');
+        if (scores.right === CONST.score.winner) {
+            scores.rightText.x = CONST.score.offset.rightText;
             return false;
         }
 
@@ -167,8 +167,8 @@
     }
 
     function playerHit(ballBody, player) {
-        currentSpeed *= _.ball.increase;
-        var deltaY = (ballBody.sprite.worldCenterY - player.worldCenterY) / _.paddle.height,
+        currentSpeed *= CONST.ball.increase;
+        var deltaY = (ballBody.sprite.worldCenterY - player.worldCenterY) / CONST.paddle.height,
             newYSpeed = currentSpeed * (1.7 * deltaY),
             newXDirection = ballBody.velocity.x > 0 ? -1.0 : 1.0;
 
