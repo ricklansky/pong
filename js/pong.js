@@ -50,6 +50,7 @@
         checkForMovement(leftPlayer, Phaser.Keyboard.A, Phaser.Keyboard.Z);
         checkForMovement(rightPlayer, Phaser.Keyboard.UP, Phaser.Keyboard.DOWN);
 
+        checkForPause();
         checkForScore();
     }
 
@@ -135,6 +136,12 @@
             player.body.velocity.y = CONST.paddle.speed;
         } else {
             player.body.velocity.y = 0;
+        }
+    }
+
+    function checkForPause() {
+        if (game.input.keyboard.justPressed(Phaser.Keyboard.SPACEBAR)) {
+            game.paused = !game.paused;
         }
     }
 
