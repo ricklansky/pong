@@ -7,6 +7,7 @@
         leftPlayer,
         rightPlayer,
         ball,
+        instructions,
         sounds = {},
         scores = {left: 0, right: 0};
 
@@ -32,12 +33,13 @@
         createWall(CONST.height - 1);
 
         createScores();
+        createInstructions();
 
         sounds.fail = game.add.audio('fail');
         sounds.wall = game.add.audio('wall');
         sounds.paddle = game.add.audio('paddleSound');
 
-        ball = createBall();
+        ball = createBall(true);
     }
 
     function update() {
@@ -59,13 +61,13 @@
         return player;
     }
 
-    function createBall() {
+    function createBall(isFirstTime) {
         var ball = game.add.sprite(CONST.width/2.0, CONST.height/2.0, 'ball');
 
         setPieceParameters(ball, 0.5, false);
         ball.body.collideCallback = ballHit;
 
-        releaseBall();
+        releaseBall(isFirstTime);
         return ball;
     }
 
@@ -90,7 +92,23 @@
         scores.rightText = game.add.text(CONST.score.offset.rightNumber, CONST.score.offset.y, '0', CONST.score.font);
     }
 
-    function releaseBall() {
+    function createInstructions() {
+        var lineHeight = 1.5 * CONST.score.size ,
+            startHeight = CONST.height/2.0 - lineHeight,
+            startLeft = CONST.width - 7 * CONST.score.size;
+
+        instructions = game.add.group();
+
+        instructions.add(game.add.text(100, startHeight, 'up: A', CONST.score.font));
+        instructions.add(game.add.text(100, startHeight + lineHeight, 'down: Z', CONST.score.font));
+
+        instructions.add(game.add.text(startLeft, startHeight, 'up: \u2191', CONST.score.font));
+        instructions.add(game.add.text(startLeft, startHeight + lineHeight, 'down: \u2193', CONST.score.font));
+
+        instructions.add(game.add.text(CONST.width/2.0 - CONST.score.size * 5, CONST.height * 0.8, 'space bar to pause', CONST.score.font));
+    }
+
+    function releaseBall(isFirstTime) {
         setTimeout(function() {
             ballIsInPlay = true;
             currentSpeed = CONST.ball.speed;
@@ -98,7 +116,13 @@
             var vectorSpeed = Math.sqrt(currentSpeed*currentSpeed/2.0);
             ball.body.velocity.x = vectorSpeed * (Math.random() > 0.5 ? 1.0 : -1.0);
             ball.body.velocity.y = vectorSpeed * (Math.random() > 0.5 ? 1.0 : -1.0);
-        }, 3000);
+        }, 3000 + (isFirstTime ? 7000 : 0));
+
+        if (isFirstTime) {
+            setTimeout(function() {
+                instructions.removeAll();
+            }, 8000);
+        }
     }
 
     function checkForMovement(player, upKey, downKey) {
